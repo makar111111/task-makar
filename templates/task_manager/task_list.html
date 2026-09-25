@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load task_manager_extras %}
+
+{% block title %}Tasks{% endblock %}
+
+{% block topbar %}
+  <div class="min-w-0">
+    <h1 class="tm-page-title">Tasks</h1>
+    <p class="tm-page-subtitle">{{ task_counts.num_open }} open · {{ task_counts.num_completed }} completed · {{ task_counts.num_overdue }} overdue</p>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <form class="tm-card p-3 mb-3" method="get" data-autosubmit>
+    <div class="d-flex flex-wrap align-items-center gap-2">
+      <div class="tm-search"><i class="bi bi-search"></i>{{ filter_form.search }}</div>
+      {{ filter_form.priority }}
+      {{ filter_form.task_type }}
+      {{ filter_form.project }}
+      {{ filter_form.tag }}
+      {{ filter_form.assignee }}
+      <input type="hidden" name="status" value="{{ status }}">
+      <button class="visually-hidden" type="submit">Apply filters</button>
+      <div class="tm-segmented ms-auto">
+        {% for value, label in status_choices %}
+          <a class="{% if value == status %}active{% endif %}" href="?{% query_transform request status=value page=None %}">{{ label }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </form>
+
+  <div class="tm-card">
+    {% if task_list %}
+      <div class="tm-table-wrap">
+        <table class="tm-table">
+          <thead>
+            <tr><th>Task</th><th>Project</th><th>Type</th><th>Priority</th><th>Deadline</th><th>Assignees</th></tr>
+          </thead>
+          <tbody>
+            {% for task in task_list %}
+              <tr{% if task.is_completed %} class="is-completed"{% endif %}>
+                <td>
+                  <div class="d-flex align-items-center gap-3">
+                    <span class="tm-check{% if task.is_completed %} done{% endif %}"><i class="bi bi-check-lg"></i></span>
+                    <div class="min-w-0">
+                      <a class="tm-task-name" href="{{ task.get_absolute_url }}">{{ task.name }}</a>
+                      {% if task.tags.all %}
+                        <div class="tm-task-meta">
+                          {% for tag in task.tags.all %}<a class="tm-tag" href="?{% query_transform request tag=tag.pk page=None %}">{{ tag }}</a>{% endfor %}
+                        </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </td>
+                <td><span class="tm-project"><span class="tm-project-dot" style="background: {{ task.project|project_color }}"></span>{{ task.project }}</span></td>
+                <td class="text-secondary">{{ task.task_type }}</td>
+                <td>{% include "includes/priority_badge.html" %}</td>
+                <td>{% include "includes/deadline.html" %}</td>
+                <td>
+                  <div class="tm-avatars">
+                    {% for worker in task.assignees.all %}
+                      <span class="tm-avatar {{ worker|avatar_class }}" title="{{ worker.get_full_name|default:worker.username }}">{{ worker.initials }}</span>
+                    {% empty %}
+                      <span class="text-secondary small">Unassigned</span>
+                    {% endfor %}
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="tm-empty"><i class="bi bi-search"></i>No tasks match these filters.</div>
+    {% endif %}
+  </div>
+
+  {% include "includes/pagination.html" %}
+
+  <script>
+    document.querySelectorAll("[data-autosubmit] select").forEach((select) => {
+      select.addEventListener("change", () => select.form.submit());
+    });
+  </script>
+{% endblock %}

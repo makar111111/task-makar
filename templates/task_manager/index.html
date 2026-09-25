@@ -68,6 +68,7 @@
       <div class="tm-card">
         <div class="tm-card-header">
           <h2 class="tm-card-title">My tasks</h2>
+          <a class="tm-card-link" href="{% url 'task_manager:task-list' %}?assignee={{ user.pk }}">View all</a>
         </div>
         {% for task in my_tasks %}
           {% include "includes/task_row.html" %}

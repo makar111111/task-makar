@@ -2,7 +2,7 @@
 <div class="tm-task-row{% if task.is_completed %} is-completed{% endif %}">
   <span class="tm-check{% if task.is_completed %} done{% endif %}"><i class="bi bi-check-lg"></i></span>
   <div class="flex-grow-1 min-w-0">
-    <span class="tm-task-name">{{ task.name }}</span>
+    <a class="tm-task-name" href="{{ task.get_absolute_url }}">{{ task.name }}</a>
     <div class="tm-task-meta">
       <span class="tm-project"><span class="tm-project-dot" style="background: {{ task.project|project_color }}"></span>{{ task.project }}</span>
       <span>·</span>

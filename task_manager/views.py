@@ -1,12 +1,26 @@
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q
 from django.shortcuts import render
 from django.utils import timezone
+from django.views import generic
 
 from task_manager.demo import DEMO_PASSWORD, DEMO_USERNAME
+from task_manager.forms import TaskFilterForm
 from task_manager.models import Project, Task, Team, Worker
+
+
+def get_task_counts():
+    today = timezone.localdate()
+    return Task.objects.aggregate(
+        num_open=Count("pk", filter=Q(is_completed=False)),
+        num_completed=Count("pk", filter=Q(is_completed=True)),
+        num_overdue=Count(
+            "pk", filter=Q(is_completed=False, deadline__lt=today)
+        ),
+    )
 
 
 class LoginView(auth_views.LoginView):
@@ -40,13 +54,7 @@ def index(request):
     num_visits = request.session.get("num_visits", 0) + 1
     request.session["num_visits"] = num_visits
 
-    task_counts = Task.objects.aggregate(
-        num_open=Count("pk", filter=Q(is_completed=False)),
-        num_completed=Count("pk", filter=Q(is_completed=True)),
-        num_overdue=Count(
-            "pk", filter=Q(is_completed=False, deadline__lt=today)
-        ),
-    )
+    task_counts = get_task_counts()
     num_all_tasks = task_counts["num_open"] + task_counts["num_completed"]
     my_open_tasks = request.user.tasks.filter(is_completed=False)
 
@@ -77,3 +85,30 @@ def index(request):
         "num_visits": num_visits,
     }
     return render(request, "task_manager/index.html", context=context)
+
+
+class TaskListView(LoginRequiredMixin, generic.ListView):
+    model = Task
+    paginate_by = 10
+    queryset = Task.objects.select_related(
+        "project", "task_type"
+    ).prefetch_related("tags", "assignees")
+
+    def get_queryset(self):
+        self.filter_form = TaskFilterForm(self.request.GET)
+        return self.filter_form.filter_queryset(super().get_queryset())
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["filter_form"] = self.filter_form
+        context["status"] = self.filter_form.get_status()
+        context["status_choices"] = TaskFilterForm.STATUS_CHOICES
+        context["task_counts"] = get_task_counts()
+        return context
+
+
+class TaskDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Task
+    queryset = Task.objects.select_related(
+        "project", "task_type"
+    ).prefetch_related("tags", "assignees__position")

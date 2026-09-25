@@ -15,6 +15,10 @@
       <a class="tm-nav-link{% if url_name == 'index' %} active{% endif %}" href="{% url 'task_manager:index' %}">
         <i class="bi bi-grid-1x2"></i>Dashboard
       </a>
+      {% open_tasks_count as open_count %}
+      <a class="tm-nav-link{% if url_name|startswith:'task-' %} active{% endif %}" href="{% url 'task_manager:task-list' %}">
+        <i class="bi bi-check2-square"></i>Tasks{% if open_count %}<span class="tm-nav-count">{{ open_count }}</span>{% endif %}
+      </a>
     </nav>
 
     <div class="tm-user">
