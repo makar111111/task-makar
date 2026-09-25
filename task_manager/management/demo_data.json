@@ -1,0 +1,199 @@
+{
+  "positions": ["Developer", "Project Manager", "QA", "Designer", "DevOps"],
+  "task_types": ["Bug", "New feature", "Breaking change", "Refactoring", "QA"],
+  "tags": [
+    "auth",
+    "backend",
+    "devops",
+    "frontend",
+    "landing-page-layout",
+    "python-refactoring",
+    "qa"
+  ],
+  "workers": [
+    {"username": "demo", "first_name": "Taras", "last_name": "Melnyk", "position": "Developer"},
+    {"username": "olena.kovalenko", "first_name": "Olena", "last_name": "Kovalenko", "position": "Project Manager"},
+    {"username": "dmytro.savchenko", "first_name": "Dmytro", "last_name": "Savchenko", "position": "Designer"},
+    {"username": "iryna.bondar", "first_name": "Iryna", "last_name": "Bondar", "position": "QA"},
+    {"username": "andrii.lysenko", "first_name": "Andrii", "last_name": "Lysenko", "position": "DevOps"},
+    {"username": "oksana.kravets", "first_name": "Oksana", "last_name": "Kravets", "position": "Developer"},
+    {"username": "maksym.hnatiuk", "first_name": "Maksym", "last_name": "Hnatiuk", "position": "Developer"},
+    {"username": "sofiia.tkachenko", "first_name": "Sofiia", "last_name": "Tkachenko", "position": "Designer"}
+  ],
+  "teams": [
+    {"name": "Core platform", "members": ["demo", "oksana.kravets", "andrii.lysenko"]},
+    {"name": "Growth", "members": ["olena.kovalenko", "dmytro.savchenko", "sofiia.tkachenko"]},
+    {"name": "Quality", "members": ["iryna.bondar", "maksym.hnatiuk"]}
+  ],
+  "projects": [
+    {
+      "name": "Customer portal",
+      "description": "Self-service portal where clients track their orders, invoices and support requests.",
+      "teams": ["Core platform", "Growth"]
+    },
+    {
+      "name": "Payments API",
+      "description": "Internal API that processes card payments, refunds and payouts.",
+      "teams": ["Core platform", "Quality"]
+    },
+    {
+      "name": "HR platform",
+      "description": "Hiring dashboard for recruiters: vacancies, candidates and interview schedules.",
+      "teams": ["Growth"]
+    },
+    {
+      "name": "Mobile app",
+      "description": "iOS and Android app for the customer portal.",
+      "teams": ["Growth", "Quality"]
+    }
+  ],
+  "tasks": [
+    {
+      "name": "Fix login redirect after session timeout",
+      "description": "After the session expires, users land on a blank page instead of the login form. Redirect them to the login page and keep the ?next= parameter.",
+      "project": "Customer portal", "task_type": "Bug", "priority": "urgent",
+      "due_in_days": -1, "is_completed": false,
+      "assignees": ["demo", "iryna.bondar"], "tags": ["auth"]
+    },
+    {
+      "name": "Add sign-in with Google button",
+      "description": "Let clients sign in with their Google account. The button goes under the login form.",
+      "project": "Customer portal", "task_type": "New feature", "priority": "high",
+      "due_in_days": 4, "is_completed": false,
+      "assignees": ["demo", "dmytro.savchenko"], "tags": ["auth", "frontend"]
+    },
+    {
+      "name": "Fix dashboard for vacancies",
+      "description": "The vacancies widget shows closed positions. Filter them out and fix the counter.",
+      "project": "HR platform", "task_type": "Bug", "priority": "medium",
+      "due_in_days": 7, "is_completed": false,
+      "assignees": ["demo", "dmytro.savchenko"], "tags": ["frontend"]
+    },
+    {
+      "name": "Refactor payment webhooks",
+      "description": "Split the webhook handler into small functions per event type and cover them with tests.",
+      "project": "Payments API", "task_type": "Refactoring", "priority": "medium",
+      "due_in_days": 11, "is_completed": false,
+      "assignees": ["demo"], "tags": ["python-refactoring", "backend"]
+    },
+    {
+      "name": "Write regression tests for checkout",
+      "description": "Cover the happy path, declined cards and 3-D Secure redirects.",
+      "project": "Payments API", "task_type": "QA", "priority": "low",
+      "due_in_days": 15, "is_completed": false,
+      "assignees": ["demo", "iryna.bondar"], "tags": ["qa"]
+    },
+    {
+      "name": "Update landing page hero section",
+      "description": "New headline, app store badges and a screenshot of the redesigned home screen.",
+      "project": "Mobile app", "task_type": "New feature", "priority": "medium",
+      "due_in_days": 8, "is_completed": false,
+      "assignees": ["dmytro.savchenko", "sofiia.tkachenko"], "tags": ["landing-page-layout", "frontend"]
+    },
+    {
+      "name": "Migrate CI to the new runners",
+      "description": "Move all pipelines to the new runner image and drop the old caching scripts.",
+      "project": "Payments API", "task_type": "Breaking change", "priority": "high",
+      "due_in_days": 13, "is_completed": false,
+      "assignees": ["andrii.lysenko"], "tags": ["devops"]
+    },
+    {
+      "name": "Remove deprecated v1 endpoints",
+      "description": "All clients have moved to v2. Delete the v1 routes and update the changelog.",
+      "project": "Payments API", "task_type": "Breaking change", "priority": "high",
+      "due_in_days": -3, "is_completed": false,
+      "assignees": ["oksana.kravets"], "tags": ["backend"]
+    },
+    {
+      "name": "Add refunds report export",
+      "description": "Finance needs a monthly CSV export of all refunds.",
+      "project": "Payments API", "task_type": "New feature", "priority": "medium",
+      "due_in_days": 20, "is_completed": false,
+      "assignees": ["oksana.kravets", "maksym.hnatiuk"], "tags": ["backend"]
+    },
+    {
+      "name": "Design onboarding screens",
+      "description": "Three short screens that explain orders, invoices and support chat.",
+      "project": "Mobile app", "task_type": "New feature", "priority": "high",
+      "due_in_days": 6, "is_completed": false,
+      "assignees": ["sofiia.tkachenko"], "tags": ["frontend"]
+    },
+    {
+      "name": "Fix push notifications on Android",
+      "description": "Notifications don't arrive when the app is in the background on Android 15.",
+      "project": "Mobile app", "task_type": "Bug", "priority": "urgent",
+      "due_in_days": 2, "is_completed": false,
+      "assignees": ["maksym.hnatiuk"], "tags": []
+    },
+    {
+      "name": "Plan Q4 roadmap",
+      "description": "Collect feature requests from recruiters and prioritise them with the team.",
+      "project": "HR platform", "task_type": "New feature", "priority": "low",
+      "due_in_days": 25, "is_completed": false,
+      "assignees": ["olena.kovalenko"], "tags": []
+    },
+    {
+      "name": "Test interview scheduling flow",
+      "description": "Check time zones, calendar invites and rescheduling.",
+      "project": "HR platform", "task_type": "QA", "priority": "medium",
+      "due_in_days": 9, "is_completed": false,
+      "assignees": ["iryna.bondar"], "tags": ["qa"]
+    },
+    {
+      "name": "Set up error monitoring",
+      "description": "Send unhandled exceptions to the monitoring service and alert the on-call channel.",
+      "project": "HR platform", "task_type": "New feature", "priority": "low",
+      "due_in_days": -5, "is_completed": true,
+      "assignees": ["andrii.lysenko"], "tags": ["devops"]
+    },
+    {
+      "name": "Move settings to environment variables",
+      "description": "Secret key, debug flag and database URL must come from the environment.",
+      "project": "Customer portal", "task_type": "Refactoring", "priority": "medium",
+      "due_in_days": -8, "is_completed": true,
+      "assignees": ["demo"], "tags": ["python-refactoring", "backend"]
+    },
+    {
+      "name": "Fix invoice PDF layout",
+      "description": "Long company names break the invoice header.",
+      "project": "Customer portal", "task_type": "Bug", "priority": "high",
+      "due_in_days": -4, "is_completed": true,
+      "assignees": ["dmytro.savchenko"], "tags": ["frontend"]
+    },
+    {
+      "name": "Add password reset emails",
+      "description": "Users can request a reset link that is valid for one hour.",
+      "project": "Customer portal", "task_type": "New feature", "priority": "medium",
+      "due_in_days": -10, "is_completed": true,
+      "assignees": ["oksana.kravets"], "tags": ["auth", "backend"]
+    },
+    {
+      "name": "Automate staging deploys",
+      "description": "Deploy every merge to develop to the staging environment.",
+      "project": "Payments API", "task_type": "New feature", "priority": "high",
+      "due_in_days": -12, "is_completed": true,
+      "assignees": ["andrii.lysenko"], "tags": ["devops"]
+    },
+    {
+      "name": "Write API docs for refunds",
+      "description": "Document request and response formats with examples.",
+      "project": "Payments API", "task_type": "New feature", "priority": "low",
+      "due_in_days": -6, "is_completed": true,
+      "assignees": ["maksym.hnatiuk"], "tags": ["backend"]
+    },
+    {
+      "name": "Redesign candidate profile",
+      "description": "Show experience, interview notes and status history on one page.",
+      "project": "HR platform", "task_type": "New feature", "priority": "medium",
+      "due_in_days": -2, "is_completed": true,
+      "assignees": ["sofiia.tkachenko", "dmytro.savchenko"], "tags": ["frontend"]
+    },
+    {
+      "name": "Smoke-test release 2.3",
+      "description": "Run the smoke test checklist on iOS and Android before the release.",
+      "project": "Mobile app", "task_type": "QA", "priority": "urgent",
+      "due_in_days": -1, "is_completed": true,
+      "assignees": ["iryna.bondar", "maksym.hnatiuk"], "tags": ["qa"]
+    }
+  ]
+}
