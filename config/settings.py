@@ -80,6 +80,10 @@ if DEBUG and not TESTING:
     ]
     INTERNAL_IPS = ["127.0.0.1"]
 
+if TESTING:
+    # A fast (and insecure) hasher makes tests with users much faster
+    PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
 ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
