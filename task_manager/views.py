@@ -1,9 +1,27 @@
+from django.conf import settings
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from django.shortcuts import render
 from django.utils import timezone
 
+from task_manager.demo import DEMO_PASSWORD, DEMO_USERNAME
 from task_manager.models import Project, Task, Team, Worker
+
+
+class LoginView(auth_views.LoginView):
+    """Login page that shows the demo account when DEMO_MODE is on."""
+
+    redirect_authenticated_user = True
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if settings.DEMO_MODE:
+            context["demo_credentials"] = {
+                "username": DEMO_USERNAME,
+                "password": DEMO_PASSWORD,
+            }
+        return context
 
 
 def get_greeting(hour):

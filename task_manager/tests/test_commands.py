@@ -4,7 +4,7 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.utils import timezone
 
-from task_manager.management.commands.seed_demo_data import DEMO_PASSWORD
+from task_manager.demo import DEMO_PASSWORD, DEMO_USERNAME
 from task_manager.models import Project, Task, Team, Worker
 
 
@@ -15,7 +15,7 @@ class SeedDemoDataCommandTests(TestCase):
     def test_demo_user_can_log_in(self):
         self.seed()
         self.assertTrue(
-            self.client.login(username="demo", password=DEMO_PASSWORD)
+            self.client.login(username=DEMO_USERNAME, password=DEMO_PASSWORD)
         )
 
     def test_demo_data_has_open_overdue_and_completed_tasks(self):

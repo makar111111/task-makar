@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone
 
+from task_manager.demo import DEMO_PASSWORD, DEMO_USERNAME
 from task_manager.models import (
     Position,
     Project,
@@ -17,7 +18,6 @@ from task_manager.models import (
 )
 
 DEMO_DATA_FILE = Path(__file__).resolve().parent.parent / "demo_data.json"
-DEMO_PASSWORD = "demo12345"
 
 
 class Command(BaseCommand):
@@ -41,7 +41,7 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                'Demo data is ready. Log in as "demo" '
+                f'Demo data is ready. Log in as "{DEMO_USERNAME}" '
                 f'with password "{DEMO_PASSWORD}".'
             )
         )

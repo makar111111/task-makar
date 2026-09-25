@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <div class="tm-auth">
+    <section class="tm-auth-brand">
+      <a class="tm-logo p-0" href="{% url 'task_manager:index' %}">
+        <span class="tm-logo-mark"><i class="bi bi-check2-all"></i></span>
+        <span>Task<span class="tm-logo-accent">Makar</span></span>
+      </a>
+
+      <div>
+        <h1 class="tm-auth-headline">Make tasks<br><span class="tm-logo-accent">happen.</span></h1>
+        <p class="tm-auth-lead">One place where developers, designers, project managers and QA engineers plan work, share it and ship it before the deadline.</p>
+
+        <div class="tm-preview" aria-hidden="true">
+          <div class="tm-preview-card" style="left: 0; top: 0">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="tm-badge tm-priority-urgent"><i class="bi bi-circle-fill"></i>Urgent</span>
+              <span class="tm-deadline overdue"><i class="bi bi-calendar-x"></i>Yesterday</span>
+            </div>
+            <div class="fw-bold">Fix login redirect after session timeout</div>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <span class="tm-project"><span class="tm-project-dot" style="background: #534ab7"></span>Customer portal</span>
+              <div class="tm-avatars"><span class="tm-avatar">TM</span><span class="tm-avatar tm-av-2">IB</span></div>
+            </div>
+          </div>
+          <div class="tm-preview-card" style="left: 120px; top: 118px">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="tm-badge tm-priority-high"><i class="bi bi-circle-fill"></i>High</span>
+              <span class="tm-deadline"><i class="bi bi-calendar3"></i>Tomorrow</span>
+            </div>
+            <div class="fw-bold">Add sign-in with Google button</div>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <span class="tm-project"><span class="tm-project-dot" style="background: #534ab7"></span>Customer portal</span>
+              <div class="tm-avatars"><span class="tm-avatar">TM</span><span class="tm-avatar tm-av-1">DS</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="small" style="color: #8b88b3">&copy; {% now "Y" %} TaskMakar · Built with Django</div>
+    </section>
+
+    <section class="tm-auth-form">
+      <div class="tm-auth-box">
+        {% block auth_content %}{% endblock %}
+      </div>
+    </section>
+  </div>
+{% endblock %}

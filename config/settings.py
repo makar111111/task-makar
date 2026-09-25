@@ -125,6 +125,10 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
 AUTH_USER_MODEL = "task_manager.Worker"
+LOGIN_REDIRECT_URL = "task_manager:index"
+
+# Show the demo account on the login page (for the public demo)
+DEMO_MODE = os.environ.get("TASKMAKAR_DEMO_MODE", "False").lower() == "true"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
