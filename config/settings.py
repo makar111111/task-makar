@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+import sys
 from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
@@ -52,6 +53,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "crispy_forms",
+    "crispy_bootstrap5",
     "task_manager",
 ]
 
@@ -64,6 +67,18 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# Django Debug Toolbar is for local development only and must stay
+# disabled while tests are running.
+TESTING = "test" in sys.argv
+
+if DEBUG and not TESTING:
+    INSTALLED_APPS += ["debug_toolbar"]
+    MIDDLEWARE = [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+        *MIDDLEWARE,
+    ]
+    INTERNAL_IPS = ["127.0.0.1"]
 
 ROOT_URLCONF = "config.urls"
 
@@ -83,6 +98,10 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
+
+# Crispy forms render Django forms with Bootstrap 5 markup
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 
 # Database
