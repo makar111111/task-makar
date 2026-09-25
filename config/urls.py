@@ -11,6 +11,7 @@ from django.urls import include, path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", include("task_manager.urls")),
 ]
 
 if "debug_toolbar" in settings.INSTALLED_APPS:

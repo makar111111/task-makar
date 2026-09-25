@@ -1,0 +1,15 @@
+{% load task_manager_extras %}
+<div class="tm-task-row{% if task.is_completed %} is-completed{% endif %}">
+  <span class="tm-check{% if task.is_completed %} done{% endif %}"><i class="bi bi-check-lg"></i></span>
+  <div class="flex-grow-1 min-w-0">
+    <span class="tm-task-name">{{ task.name }}</span>
+    <div class="tm-task-meta">
+      <span class="tm-project"><span class="tm-project-dot" style="background: {{ task.project|project_color }}"></span>{{ task.project }}</span>
+      <span>·</span>
+      <span>{{ task.task_type }}</span>
+      {% for tag in task.tags.all %}<span class="tm-tag">{{ tag }}</span>{% endfor %}
+    </div>
+  </div>
+  {% include "includes/priority_badge.html" %}
+  <span class="d-none d-sm-inline-flex" style="width: 96px">{% include "includes/deadline.html" %}</span>
+</div>

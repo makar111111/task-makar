@@ -1,0 +1,1 @@
+{% load humanize %}<span class="tm-deadline{% if task.is_overdue %} overdue{% endif %}" title="Deadline: {{ task.deadline|date:'l, j F Y' }}"><i class="bi {% if task.is_completed %}bi-calendar-check{% elif task.is_overdue %}bi-calendar-x{% else %}bi-calendar3{% endif %}"></i>{{ task.deadline|naturalday:"M j"|capfirst }}</span>
