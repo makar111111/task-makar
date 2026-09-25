@@ -1,7 +1,17 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
+
+validate_kebab_case = RegexValidator(
+    regex=r"^[a-z0-9]+(-[a-z0-9]+)*$",
+    message=(
+        "Use kebab-case: lowercase letters and digits separated by "
+        "single hyphens, e.g. landing-page-layout."
+    ),
+)
 
 
 class Position(models.Model):
@@ -86,3 +96,74 @@ class Project(models.Model):
             for member in team.members.all():
                 members[member.pk] = member
         return list(members.values())
+
+
+class TaskType(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class Tag(models.Model):
+    name = models.CharField(
+        max_length=50,
+        unique=True,
+        validators=[validate_kebab_case],
+    )
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class Task(models.Model):
+    class Priority(models.TextChoices):
+        URGENT = "urgent", "Urgent"
+        HIGH = "high", "High"
+        MEDIUM = "medium", "Medium"
+        LOW = "low", "Low"
+
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    deadline = models.DateField()
+    is_completed = models.BooleanField(default=False)
+    priority = models.CharField(
+        max_length=10,
+        choices=Priority,
+        default=Priority.MEDIUM,
+    )
+    task_type = models.ForeignKey(
+        TaskType,
+        on_delete=models.PROTECT,
+        related_name="tasks",
+    )
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name="tasks",
+    )
+    assignees = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name="tasks",
+        blank=True,
+    )
+    tags = models.ManyToManyField(Tag, related_name="tasks", blank=True)
+
+    class Meta:
+        ordering = ["is_completed", "deadline", "name"]
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("task_manager:task-detail", kwargs={"pk": self.pk})
+
+    @property
+    def is_overdue(self):
+        return not self.is_completed and self.deadline < timezone.localdate()
