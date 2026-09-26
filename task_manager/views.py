@@ -1,13 +1,16 @@
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Count, Q
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views import generic
+from django.views.decorators.http import require_POST
 
 from task_manager.demo import DEMO_PASSWORD, DEMO_USERNAME
 from task_manager.forms import TaskFilterForm, TaskForm
@@ -175,3 +178,41 @@ class TaskDeleteView(
 ):
     model = Task
     success_url = reverse_lazy("task_manager:task-list")
+
+
+def redirect_back(request, fallback_url):
+    """Redirect to the "next" URL of the form, if it's a safe local URL."""
+    next_url = request.POST.get("next")
+    if next_url and url_has_allowed_host_and_scheme(
+        next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return redirect(next_url)
+    return redirect(fallback_url)
+
+
+@login_required
+@require_POST
+def toggle_task_assignment(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    if task.assignees.filter(pk=request.user.pk).exists():
+        task.assignees.remove(request.user)
+        messages.info(request, f'You are no longer assigned to "{task}".')
+    else:
+        task.assignees.add(request.user)
+        messages.success(request, f'You are assigned to "{task}".')
+    return redirect_back(request, task.get_absolute_url())
+
+
+@login_required
+@require_POST
+def toggle_task_completion(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    task.is_completed = not task.is_completed
+    task.save(update_fields=["is_completed"])
+    if task.is_completed:
+        messages.success(request, f'"{task}" is completed. Nice work!')
+    else:
+        messages.info(request, f'"{task}" is open again.')
+    return redirect_back(request, task.get_absolute_url())

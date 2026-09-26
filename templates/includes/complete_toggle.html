@@ -1,0 +1,5 @@
+<form method="post" action="{% url 'task_manager:task-toggle-complete' task.pk %}" class="d-inline-flex">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+  <button type="submit" class="tm-check{% if task.is_completed %} done{% endif %}" title="{% if task.is_completed %}Reopen the task{% else %}Mark as completed{% endif %}" aria-label="{% if task.is_completed %}Reopen {{ task.name }}{% else %}Mark {{ task.name }} as completed{% endif %}"><i class="bi bi-check-lg"></i></button>
+</form>

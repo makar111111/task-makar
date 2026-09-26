@@ -153,3 +153,52 @@ class TaskCreateUpdateDeleteTests(TestCase):
         response = self.client.post(url)
         self.assertRedirects(response, TASK_LIST_URL)
         self.assertFalse(Task.objects.filter(pk=self.task.pk).exists())
+
+
+class TaskActionTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = create_worker()
+        cls.task = create_task()
+        cls.assign_url = reverse(
+            "task_manager:task-toggle-assign", args=[cls.task.pk]
+        )
+        cls.complete_url = reverse(
+            "task_manager:task-toggle-complete", args=[cls.task.pk]
+        )
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_assign_me_adds_and_then_removes_the_user(self):
+        self.client.post(self.assign_url)
+        self.assertIn(self.user, self.task.assignees.all())
+
+        self.client.post(self.assign_url)
+        self.assertNotIn(self.user, self.task.assignees.all())
+
+    def test_complete_toggles_task_status(self):
+        self.client.post(self.complete_url)
+        self.task.refresh_from_db()
+        self.assertTrue(self.task.is_completed)
+
+        self.client.post(self.complete_url)
+        self.task.refresh_from_db()
+        self.assertFalse(self.task.is_completed)
+
+    def test_actions_accept_only_post(self):
+        for url in (self.assign_url, self.complete_url):
+            with self.subTest(url=url):
+                self.assertEqual(self.client.get(url).status_code, 405)
+
+    def test_redirects_back_to_local_next_url(self):
+        response = self.client.post(
+            self.complete_url, {"next": "/tasks/?status=all"}
+        )
+        self.assertRedirects(response, "/tasks/?status=all")
+
+    def test_ignores_next_url_of_another_site(self):
+        response = self.client.post(
+            self.complete_url, {"next": "https://evil.example.com/"}
+        )
+        self.assertRedirects(response, self.task.get_absolute_url())

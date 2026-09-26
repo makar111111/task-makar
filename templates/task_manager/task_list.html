@@ -42,7 +42,7 @@
               <tr{% if task.is_completed %} class="is-completed"{% endif %}>
                 <td>
                   <div class="d-flex align-items-center gap-3">
-                    <span class="tm-check{% if task.is_completed %} done{% endif %}"><i class="bi bi-check-lg"></i></span>
+                    {% include "includes/complete_toggle.html" %}
                     <div class="min-w-0">
                       <a class="tm-task-name" href="{{ task.get_absolute_url }}">{{ task.name }}</a>
                       {% if task.tags.all %}

@@ -23,4 +23,14 @@ urlpatterns = [
         views.TaskDeleteView.as_view(),
         name="task-delete",
     ),
+    path(
+        "tasks/<int:pk>/toggle-assign/",
+        views.toggle_task_assignment,
+        name="task-toggle-assign",
+    ),
+    path(
+        "tasks/<int:pk>/toggle-complete/",
+        views.toggle_task_completion,
+        name="task-toggle-complete",
+    ),
 ]
