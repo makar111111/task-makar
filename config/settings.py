@@ -62,6 +62,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -168,6 +169,20 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# In production WhiteNoise serves compressed static files with hashed
+# names that "collectstatic" creates. Local development and tests keep
+# the default storage, so they work without running "collectstatic".
+if not DEBUG and not TESTING:
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage."
+            "CompressedManifestStaticFilesStorage",
+        },
+    }
 
 # Bootstrap calls the error alert "danger"
 MESSAGE_TAGS = {messages.ERROR: "danger"}
