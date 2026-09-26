@@ -8,6 +8,7 @@
     <h1 class="tm-page-title">Tasks</h1>
     <p class="tm-page-subtitle">{{ task_counts.num_open }} open · {{ task_counts.num_completed }} completed · {{ task_counts.num_overdue }} overdue</p>
   </div>
+  <a class="btn btn-primary ms-auto" href="{% url 'task_manager:task-create' %}"><i class="bi bi-plus-lg me-1"></i>New task</a>
 {% endblock %}
 
 {% block content %}

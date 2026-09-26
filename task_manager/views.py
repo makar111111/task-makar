@@ -2,14 +2,47 @@ from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Count, Q
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import generic
 
 from task_manager.demo import DEMO_PASSWORD, DEMO_USERNAME
-from task_manager.forms import TaskFilterForm
+from task_manager.forms import TaskFilterForm, TaskForm
 from task_manager.models import Project, Task, Team, Worker
+
+
+class ObjectMessageMixin(SuccessMessageMixin):
+    """Success message with the saved or deleted object, e.g.
+    'Task "Fix login" was created.' Works for delete views too, where
+    the form has no cleaned data about the object."""
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % {"object": self.object}
+
+
+class ConfirmDeleteMixin(ObjectMessageMixin):
+    """Shared confirmation page for all delete views."""
+
+    template_name = "task_manager/confirm_delete.html"
+    success_message = '"%(object)s" was deleted.'
+
+    def get_cancel_url(self):
+        if hasattr(self.object, "get_absolute_url"):
+            return self.object.get_absolute_url()
+        return self.get_success_url()
+
+    def get_delete_warning(self):
+        return ""
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["object_type"] = self.model._meta.verbose_name
+        context["cancel_url"] = self.get_cancel_url()
+        context["delete_warning"] = self.get_delete_warning()
+        return context
 
 
 def get_task_counts():
@@ -112,3 +145,33 @@ class TaskDetailView(LoginRequiredMixin, generic.DetailView):
     queryset = Task.objects.select_related(
         "project", "task_type"
     ).prefetch_related("tags", "assignees__position")
+
+
+class TaskCreateView(
+    LoginRequiredMixin, ObjectMessageMixin, generic.CreateView
+):
+    model = Task
+    form_class = TaskForm
+    success_message = 'Task "%(object)s" was created.'
+
+    def get_initial(self):
+        """Preselect the project when the task is added from its page."""
+        initial = super().get_initial()
+        if "project" in self.request.GET:
+            initial["project"] = self.request.GET["project"]
+        return initial
+
+
+class TaskUpdateView(
+    LoginRequiredMixin, ObjectMessageMixin, generic.UpdateView
+):
+    model = Task
+    form_class = TaskForm
+    success_message = 'Task "%(object)s" was updated.'
+
+
+class TaskDeleteView(
+    LoginRequiredMixin, ConfirmDeleteMixin, generic.DeleteView
+):
+    model = Task
+    success_url = reverse_lazy("task_manager:task-list")

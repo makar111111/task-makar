@@ -1,14 +1,73 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from task_manager.models import Project, Tag, Task, TaskType
 
 
-class WorkerChoiceField(forms.ModelChoiceField):
+class WorkerLabelMixin:
     """Shows workers by full name instead of "username (Full Name)"."""
 
     def label_from_instance(self, obj):
         return obj.get_full_name() or obj.username
+
+
+class WorkerChoiceField(WorkerLabelMixin, forms.ModelChoiceField):
+    pass
+
+
+class WorkerMultipleChoiceField(
+    WorkerLabelMixin, forms.ModelMultipleChoiceField
+):
+    pass
+
+
+class TaskForm(forms.ModelForm):
+    assignees = WorkerMultipleChoiceField(
+        queryset=get_user_model().objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple(
+            attrs={"class": "form-check-input"}
+        ),
+    )
+    tags = forms.ModelMultipleChoiceField(
+        queryset=Tag.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple(
+            attrs={"class": "form-check-input"}
+        ),
+    )
+
+    class Meta:
+        model = Task
+        fields = (
+            "name",
+            "description",
+            "project",
+            "task_type",
+            "priority",
+            "deadline",
+            "assignees",
+            "tags",
+        )
+        widgets = {
+            "description": forms.Textarea(attrs={"rows": 5}),
+            "deadline": forms.DateInput(
+                attrs={"type": "date"}, format="%Y-%m-%d"
+            ),
+        }
+
+    def clean_deadline(self):
+        """A new deadline can't be in the past.
+
+        An old deadline of an existing task may stay as it is, otherwise
+        overdue tasks couldn't be edited at all.
+        """
+        deadline = self.cleaned_data["deadline"]
+        if "deadline" in self.changed_data and deadline < timezone.localdate():
+            raise ValidationError("The deadline can't be in the past.")
+        return deadline
 
 
 class TaskFilterForm(forms.Form):

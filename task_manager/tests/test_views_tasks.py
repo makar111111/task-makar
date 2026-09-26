@@ -1,5 +1,8 @@
+from datetime import timedelta
+
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
 from task_manager.models import Tag, Task
 from task_manager.tests.utils import create_task, create_worker
@@ -87,3 +90,66 @@ class TaskDetailTests(TestCase):
         self.assertContains(response, "Users land on a blank page.")
         self.assertContains(response, "Customer portal")
         self.assertContains(response, "Iryna Bondar")
+
+
+class TaskCreateUpdateDeleteTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = create_worker()
+        cls.task = create_task()
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def get_form_data(self, **fields):
+        form_data = {
+            "name": "Add sign-in with Google",
+            "project": self.task.project.pk,
+            "task_type": self.task.task_type.pk,
+            "priority": "high",
+            "deadline": timezone.localdate().isoformat(),
+            "assignees": [self.user.pk],
+        }
+        return form_data | fields
+
+    def test_create_task(self):
+        response = self.client.post(
+            reverse("task_manager:task-create"), self.get_form_data()
+        )
+
+        task = Task.objects.get(name="Add sign-in with Google")
+        self.assertRedirects(response, task.get_absolute_url())
+        self.assertEqual(list(task.assignees.all()), [self.user])
+
+    def test_create_page_preselects_project_from_query(self):
+        response = self.client.get(
+            reverse("task_manager:task-create"),
+            {"project": self.task.project.pk},
+        )
+        self.assertEqual(
+            response.context["form"].initial["project"],
+            str(self.task.project.pk),
+        )
+
+    def test_task_with_past_deadline_is_not_created(self):
+        yesterday = timezone.localdate() - timedelta(days=1)
+        response = self.client.post(
+            reverse("task_manager:task-create"),
+            self.get_form_data(deadline=yesterday.isoformat()),
+        )
+        self.assertContains(response, "The deadline can")
+        self.assertFalse(
+            Task.objects.filter(name="Add sign-in with Google").exists()
+        )
+
+    def test_update_task(self):
+        url = reverse("task_manager:task-update", args=[self.task.pk])
+        self.client.post(url, self.get_form_data(name="Renamed task"))
+        self.task.refresh_from_db()
+        self.assertEqual(self.task.name, "Renamed task")
+
+    def test_delete_task(self):
+        url = reverse("task_manager:task-delete", args=[self.task.pk])
+        response = self.client.post(url)
+        self.assertRedirects(response, TASK_LIST_URL)
+        self.assertFalse(Task.objects.filter(pk=self.task.pk).exists())
