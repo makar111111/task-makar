@@ -83,6 +83,7 @@
       <div class="tm-card">
         <div class="tm-card-header">
           <h2 class="tm-card-title">Projects</h2>
+          <a class="tm-card-link" href="{% url 'task_manager:project-list' %}">View all</a>
         </div>
         <div class="px-3 py-2">
           {% for project in projects %}

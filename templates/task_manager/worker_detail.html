@@ -76,7 +76,7 @@
         <div class="tm-card-header"><h2 class="tm-card-title">Projects</h2></div>
         <div class="tm-card-body d-flex flex-column gap-2">
           {% for project in projects %}
-            <span class="tm-project"><span class="tm-project-dot" style="background: {{ project|project_color }}"></span>{{ project }}</span>
+            <a class="tm-project" href="{{ project.get_absolute_url }}"><span class="tm-project-dot" style="background: {{ project|project_color }}"></span>{{ project }}</a>
           {% empty %}
             <span class="text-secondary small">Works on no projects yet.</span>
           {% endfor %}

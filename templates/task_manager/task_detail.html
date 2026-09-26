@@ -68,7 +68,7 @@
         <div class="tm-card-body">
           <dl class="tm-meta-list">
             <dt>Project</dt>
-            <dd><span class="tm-project"><span class="tm-project-dot" style="background: {{ task.project|project_color }}"></span>{{ task.project }}</span></dd>
+            <dd><a class="tm-project" href="{{ task.project.get_absolute_url }}"><span class="tm-project-dot" style="background: {{ task.project|project_color }}"></span>{{ task.project }}</a></dd>
             <dt>Type</dt>
             <dd>{{ task.task_type }}</dd>
             <dt>Priority</dt>

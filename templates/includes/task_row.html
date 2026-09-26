@@ -4,7 +4,7 @@
   <div class="flex-grow-1 min-w-0">
     <a class="tm-task-name" href="{{ task.get_absolute_url }}">{{ task.name }}</a>
     <div class="tm-task-meta">
-      <span class="tm-project"><span class="tm-project-dot" style="background: {{ task.project|project_color }}"></span>{{ task.project }}</span>
+      <a class="tm-project" href="{{ task.project.get_absolute_url }}"><span class="tm-project-dot" style="background: {{ task.project|project_color }}"></span>{{ task.project }}</a>
       <span>·</span>
       <span>{{ task.task_type }}</span>
       {% for tag in task.tags.all %}<span class="tm-tag">{{ tag }}</span>{% endfor %}

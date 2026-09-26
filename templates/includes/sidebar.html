@@ -19,6 +19,9 @@
       <a class="tm-nav-link{% if url_name|startswith:'task-' %} active{% endif %}" href="{% url 'task_manager:task-list' %}">
         <i class="bi bi-check2-square"></i>Tasks{% if open_count %}<span class="tm-nav-count">{{ open_count }}</span>{% endif %}
       </a>
+      <a class="tm-nav-link{% if url_name|startswith:'project-' %} active{% endif %}" href="{% url 'task_manager:project-list' %}">
+        <i class="bi bi-kanban"></i>Projects
+      </a>
       <a class="tm-nav-link{% if url_name|startswith:'worker-' %} active{% endif %}" href="{% url 'task_manager:worker-list' %}">
         <i class="bi bi-person-badge"></i>Workers
       </a>

@@ -4,7 +4,14 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from task_manager.models import Project, Tag, Task, TaskType, Worker
+from task_manager.models import (
+    Project,
+    Tag,
+    Task,
+    TaskType,
+    Team,
+    Worker,
+)
 
 
 class SearchForm(forms.Form):
@@ -63,6 +70,21 @@ class WorkerMultipleChoiceField(
     WorkerLabelMixin, forms.ModelMultipleChoiceField
 ):
     pass
+
+
+class ProjectForm(forms.ModelForm):
+    teams = forms.ModelMultipleChoiceField(
+        queryset=Team.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple(
+            attrs={"class": "form-check-input"}
+        ),
+    )
+
+    class Meta:
+        model = Project
+        fields = ("name", "description", "teams")
+        widgets = {"description": forms.Textarea(attrs={"rows": 4})}
 
 
 class TaskForm(forms.ModelForm):

@@ -53,7 +53,7 @@
                     </div>
                   </div>
                 </td>
-                <td><span class="tm-project"><span class="tm-project-dot" style="background: {{ task.project|project_color }}"></span>{{ task.project }}</span></td>
+                <td><a class="tm-project" href="{{ task.project.get_absolute_url }}"><span class="tm-project-dot" style="background: {{ task.project|project_color }}"></span>{{ task.project }}</a></td>
                 <td class="text-secondary">{{ task.task_type }}</td>
                 <td>{% include "includes/priority_badge.html" %}</td>
                 <td>{% include "includes/deadline.html" %}</td>
