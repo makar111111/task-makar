@@ -74,7 +74,11 @@
             <dt>Priority</dt>
             <dd>{% include "includes/priority_badge.html" %}</dd>
             <dt>Deadline</dt>
-            <dd>{% include "includes/deadline.html" %} <span class="text-secondary small ms-1">{{ task.deadline|date:"j M Y" }}</span></dd>
+            <dd>
+              <span class="tm-deadline{% if task.is_overdue %} overdue{% endif %}">
+                <i class="bi {% if task.is_completed %}bi-calendar-check{% elif task.is_overdue %}bi-calendar-x{% else %}bi-calendar3{% endif %}"></i>{{ task.deadline|date:"D, j M Y" }}
+              </span>
+            </dd>
           </dl>
         </div>
       </div>
