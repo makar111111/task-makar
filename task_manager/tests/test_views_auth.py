@@ -51,3 +51,10 @@ class LogoutTests(TestCase):
 
         self.assertContains(response, "You're signed out")
         self.assertNotIn("_auth_user_id", self.client.session)
+
+
+class PasswordPagesTests(TestCase):
+    def test_password_reset_and_change_pages_are_not_available(self):
+        for url in ("/accounts/password_reset/", "/accounts/password_change/"):
+            with self.subTest(url=url):
+                self.assertEqual(self.client.get(url).status_code, 404)
