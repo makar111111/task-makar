@@ -65,7 +65,7 @@
         <div class="tm-card-header"><h2 class="tm-card-title">Teams</h2></div>
         <div class="tm-card-body d-flex flex-wrap gap-2">
           {% for team in worker.teams.all %}
-            <span class="tm-tag">{{ team }}</span>
+            <a class="tm-tag" href="{{ team.get_absolute_url }}">{{ team }}</a>
           {% empty %}
             <span class="text-secondary small">Not in a team yet.</span>
           {% endfor %}

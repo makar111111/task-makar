@@ -35,7 +35,7 @@
               <div class="d-flex justify-content-between align-items-center mt-3">
                 <div class="d-flex flex-wrap gap-1">
                   {% for team in project.teams.all %}
-                    <span class="tm-tag">{{ team }}</span>
+                    <a class="tm-tag" href="{{ team.get_absolute_url }}">{{ team }}</a>
                   {% empty %}
                     <span class="small text-secondary">No teams yet</span>
                   {% endfor %}

@@ -87,6 +87,20 @@ class ProjectForm(forms.ModelForm):
         widgets = {"description": forms.Textarea(attrs={"rows": 4})}
 
 
+class TeamForm(forms.ModelForm):
+    members = WorkerMultipleChoiceField(
+        queryset=get_user_model().objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple(
+            attrs={"class": "form-check-input"}
+        ),
+    )
+
+    class Meta:
+        model = Team
+        fields = ("name", "members")
+
+
 class TaskForm(forms.ModelForm):
     assignees = WorkerMultipleChoiceField(
         queryset=get_user_model().objects.all(),

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load task_manager_extras %}
+
+{% block title %}Teams{% endblock %}
+
+{% block topbar %}
+  <div class="min-w-0">
+    <h1 class="tm-page-title">Teams</h1>
+    <p class="tm-page-subtitle">Groups of workers that ship projects together.</p>
+  </div>
+  <a class="btn btn-primary ms-auto" href="{% url 'task_manager:team-create' %}"><i class="bi bi-plus-lg me-1"></i>New team</a>
+{% endblock %}
+
+{% block content %}
+  {% include "includes/search_form.html" %}
+
+  <div class="row g-3">
+    {% for team in team_list %}
+      <div class="col-md-6 col-xl-4">
+        <div class="tm-card p-3 h-100 d-flex flex-column">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <span class="tm-stat-icon tm-soft-primary"><i class="bi bi-people"></i></span>
+            <div class="min-w-0">
+              <a class="fw-bold fs-6 text-decoration-none text-reset" href="{{ team.get_absolute_url }}">{{ team.name }}</a>
+              <div class="small text-secondary">{{ team.num_members }} member{{ team.num_members|pluralize }} · {{ team.num_projects }} project{{ team.num_projects|pluralize }}</div>
+            </div>
+          </div>
+          <div class="d-flex flex-wrap gap-1 mb-3">
+            {% for project in team.projects.all %}
+              <a class="tm-project small" href="{{ project.get_absolute_url }}"><span class="tm-project-dot" style="background: {{ project|project_color }}"></span>{{ project }}</a>{% if not forloop.last %}<span class="text-secondary">·</span>{% endif %}
+            {% empty %}
+              <span class="small text-secondary">No projects yet</span>
+            {% endfor %}
+          </div>
+          <div class="tm-avatars mt-auto">
+            {% for member in team.members.all|slice:":6" %}
+              <a class="tm-avatar {{ member|avatar_class }}" href="{{ member.get_absolute_url }}" title="{{ member.get_full_name|default:member.username }}">{{ member.initials }}</a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12">
+        <div class="tm-card tm-empty"><i class="bi bi-people"></i>No teams found.</div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% include "includes/pagination.html" %}
+{% endblock %}

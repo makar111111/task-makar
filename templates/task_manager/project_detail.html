@@ -83,7 +83,7 @@
         <div class="tm-card-header"><h2 class="tm-card-title">Teams</h2></div>
         {% for team in project.teams.all %}
           <div class="tm-person justify-content-between">
-            <span class="tm-person-name">{{ team.name }}</span>
+            <a class="tm-person-name" href="{{ team.get_absolute_url }}">{{ team.name }}</a>
             <div class="tm-avatars">
               {% for member in team.members.all %}
                 <a class="tm-avatar {{ member|avatar_class }}" href="{{ member.get_absolute_url }}" title="{{ member.get_full_name|default:member.username }}">{{ member.initials }}</a>
