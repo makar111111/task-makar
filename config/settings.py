@@ -16,6 +16,7 @@ import os
 import sys
 from pathlib import Path
 
+import dj_database_url
 from django.contrib.messages import constants as messages
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
@@ -120,6 +121,13 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+# A persistent database, e.g. PostgreSQL, is connected with DATABASE_URL:
+# postgres://user:password@host:5432/database_name
+if os.environ.get("DATABASE_URL"):
+    DATABASES["default"] = dj_database_url.config(
+        conn_max_age=600, conn_health_checks=True
+    )
 
 
 # Password validation
