@@ -17,12 +17,16 @@
       {% if delete_warning %}
         <p class="text-danger fw-semibold mb-2"><i class="bi bi-exclamation-triangle me-1"></i>{{ delete_warning }}</p>
       {% endif %}
-      <p class="text-secondary small mb-4">This can't be undone.</p>
-      <form method="post" class="d-flex gap-2">
-        {% csrf_token %}
-        <button class="btn btn-danger" type="submit">Yes, delete</button>
-        <a class="btn btn-light" href="{{ cancel_url }}">Cancel</a>
-      </form>
+      {% if can_delete %}
+        <p class="text-secondary small mb-4">This can't be undone.</p>
+        <form method="post" class="d-flex gap-2">
+          {% csrf_token %}
+          <button class="btn btn-danger" type="submit">Yes, delete</button>
+          <a class="btn btn-light" href="{{ cancel_url }}">Cancel</a>
+        </form>
+      {% else %}
+        <a class="btn btn-light mt-2" href="{{ cancel_url }}">Back</a>
+      {% endif %}
     </div>
   </div>
 {% endblock %}

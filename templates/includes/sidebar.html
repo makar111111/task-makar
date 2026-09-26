@@ -28,6 +28,17 @@
       <a class="tm-nav-link{% if url_name|startswith:'worker-' %} active{% endif %}" href="{% url 'task_manager:worker-list' %}">
         <i class="bi bi-person-badge"></i>Workers
       </a>
+
+      <div class="tm-nav-label">Directories</div>
+      <a class="tm-nav-link{% if url_name|startswith:'tasktype-' %} active{% endif %}" href="{% url 'task_manager:tasktype-list' %}">
+        <i class="bi bi-bookmark"></i>Task types
+      </a>
+      <a class="tm-nav-link{% if url_name|startswith:'position-' %} active{% endif %}" href="{% url 'task_manager:position-list' %}">
+        <i class="bi bi-briefcase"></i>Positions
+      </a>
+      <a class="tm-nav-link{% if url_name|startswith:'tag-' %} active{% endif %}" href="{% url 'task_manager:tag-list' %}">
+        <i class="bi bi-tags"></i>Tags
+      </a>
     </nav>
 
     <div class="tm-user">
