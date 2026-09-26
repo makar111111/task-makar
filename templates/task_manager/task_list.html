@@ -60,7 +60,7 @@
                 <td>
                   <div class="tm-avatars">
                     {% for worker in task.assignees.all %}
-                      <span class="tm-avatar {{ worker|avatar_class }}" title="{{ worker.get_full_name|default:worker.username }}">{{ worker.initials }}</span>
+                      <a class="tm-avatar {{ worker|avatar_class }}" href="{{ worker.get_absolute_url }}" title="{{ worker.get_full_name|default:worker.username }}">{{ worker.initials }}</a>
                     {% empty %}
                       <span class="text-secondary small">Unassigned</span>
                     {% endfor %}

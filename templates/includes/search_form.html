@@ -1,0 +1,9 @@
+<form method="get" class="tm-card p-3 mb-3">
+  <div class="d-flex flex-wrap align-items-center gap-2">
+    <div class="tm-search"><i class="bi bi-search"></i>{{ search_form.search }}</div>
+    <button class="btn btn-light" type="submit">Search</button>
+    {% if search_form.search.value %}
+      <a class="btn btn-link text-decoration-none" href="?">Clear</a>
+    {% endif %}
+  </div>
+</form>

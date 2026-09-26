@@ -92,7 +92,7 @@
           <div class="tm-person">
             <span class="tm-avatar {{ worker|avatar_class }}">{{ worker.initials }}</span>
             <div class="min-w-0">
-              <div class="tm-person-name text-truncate">{{ worker.get_full_name|default:worker.username }}</div>
+              <a class="tm-person-name text-truncate d-block" href="{{ worker.get_absolute_url }}">{{ worker.get_full_name|default:worker.username }}</a>
               <div class="small text-secondary">{{ worker.position|default:"No position" }}</div>
             </div>
           </div>

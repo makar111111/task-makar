@@ -1,9 +1,51 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from task_manager.models import Project, Tag, Task, TaskType
+from task_manager.models import Project, Tag, Task, TaskType, Worker
+
+
+class SearchForm(forms.Form):
+    search = forms.CharField(
+        required=False,
+        max_length=255,
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+    )
+
+    def __init__(self, *args, placeholder="Search...", **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["search"].widget.attrs["placeholder"] = placeholder
+
+
+class WorkerProfileFieldsMixin:
+    """Makes the name and the email required for workers."""
+
+    required_fields = ("first_name", "last_name", "email")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name in self.required_fields:
+            self.fields[field_name].required = True
+        self.fields["position"].empty_label = "No position"
+
+
+class WorkerCreationForm(WorkerProfileFieldsMixin, UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = Worker
+        fields = UserCreationForm.Meta.fields + (
+            "first_name",
+            "last_name",
+            "email",
+            "position",
+        )
+
+
+class WorkerUpdateForm(WorkerProfileFieldsMixin, forms.ModelForm):
+    class Meta:
+        model = Worker
+        fields = ("first_name", "last_name", "email", "position")
 
 
 class WorkerLabelMixin:

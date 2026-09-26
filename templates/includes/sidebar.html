@@ -19,12 +19,15 @@
       <a class="tm-nav-link{% if url_name|startswith:'task-' %} active{% endif %}" href="{% url 'task_manager:task-list' %}">
         <i class="bi bi-check2-square"></i>Tasks{% if open_count %}<span class="tm-nav-count">{{ open_count }}</span>{% endif %}
       </a>
+      <a class="tm-nav-link{% if url_name|startswith:'worker-' %} active{% endif %}" href="{% url 'task_manager:worker-list' %}">
+        <i class="bi bi-person-badge"></i>Workers
+      </a>
     </nav>
 
     <div class="tm-user">
       <span class="tm-avatar {{ user|avatar_class }}">{{ user.initials }}</span>
       <div class="min-w-0">
-        <div class="tm-user-name text-truncate">{{ user.get_full_name|default:user.username }}</div>
+        <a class="tm-user-name text-truncate d-block" href="{{ user.get_absolute_url }}">{{ user.get_full_name|default:user.username }}</a>
         <div class="tm-user-role text-truncate">{{ user.position|default:"No position" }}</div>
       </div>
       <form class="tm-logout" method="post" action="{% url 'logout' %}">
