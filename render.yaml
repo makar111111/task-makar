@@ -1,0 +1,19 @@
+# Render Blueprint: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: task-makar
+    runtime: python
+    plan: free
+    buildCommand: bash build.sh
+    startCommand: bash start.sh
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_SECURE_HTTPS
+        value: "True"
+      - key: TASKMAKAR_DEMO_MODE
+        value: "True"
+      - key: WEB_CONCURRENCY
+        value: "2"
