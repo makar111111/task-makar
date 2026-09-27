@@ -157,6 +157,16 @@ class Task(models.Model):
 
     class Meta:
         ordering = ["is_completed", "deadline", "name"]
+        indexes = [
+            # Task lists are sorted by status and deadline, and overdue
+            # tasks are open tasks with a past deadline. The project needs
+            # no index here: Django adds one to every ForeignKey.
+            models.Index(
+                fields=["is_completed", "deadline"],
+                name="task_status_deadline_idx",
+            ),
+            models.Index(fields=["priority"], name="task_priority_idx"),
+        ]
 
     def __str__(self):
         return self.name
