@@ -10,7 +10,7 @@ from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from django.urls import include, path
 
-from task_manager.views import LoginView
+from task_manager.views.auth import LoginView
 
 # Only login and logout: the password reset and change pages of
 # django.contrib.auth need email and have no TaskMakar templates.
