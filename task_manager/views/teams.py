@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -67,11 +68,14 @@ class TeamDeleteView(
 @login_required
 @require_POST
 def toggle_team_membership(request, pk):
-    team = get_object_or_404(Team, pk=pk)
-    if team.members.filter(pk=request.user.pk).exists():
-        team.members.remove(request.user)
-        messages.info(request, f'You left the team "{team}".')
-    else:
-        team.members.add(request.user)
-        messages.success(request, f'You joined the team "{team}".')
+    # The team row stays locked until the transaction ends, so parallel
+    # requests (a double click, two tabs) change the team one by one
+    with transaction.atomic():
+        team = get_object_or_404(Team.objects.select_for_update(), pk=pk)
+        if team.members.filter(pk=request.user.pk).exists():
+            team.members.remove(request.user)
+            messages.info(request, f'You left the team "{team}".')
+        else:
+            team.members.add(request.user)
+            messages.success(request, f'You joined the team "{team}".')
     return redirect_back(request, team.get_absolute_url())

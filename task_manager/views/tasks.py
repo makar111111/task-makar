@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -88,22 +89,28 @@ class TaskDeleteView(
 @login_required
 @require_POST
 def toggle_task_assignment(request, pk):
-    task = get_object_or_404(Task, pk=pk)
-    if task.assignees.filter(pk=request.user.pk).exists():
-        task.assignees.remove(request.user)
-        messages.info(request, f'You are no longer assigned to "{task}".')
-    else:
-        task.assignees.add(request.user)
-        messages.success(request, f'You are assigned to "{task}".')
+    # The task row stays locked until the transaction ends, so parallel
+    # requests (a double click, two tabs) change the task one by one
+    with transaction.atomic():
+        task = get_object_or_404(Task.objects.select_for_update(), pk=pk)
+        if task.assignees.filter(pk=request.user.pk).exists():
+            task.assignees.remove(request.user)
+            messages.info(request, f'You are no longer assigned to "{task}".')
+        else:
+            task.assignees.add(request.user)
+            messages.success(request, f'You are assigned to "{task}".')
     return redirect_back(request, task.get_absolute_url())
 
 
 @login_required
 @require_POST
 def toggle_task_completion(request, pk):
-    task = get_object_or_404(Task, pk=pk)
-    task.is_completed = not task.is_completed
-    task.save(update_fields=["is_completed"])
+    # The task row stays locked until the transaction ends, so parallel
+    # requests (a double click, two tabs) change the task one by one
+    with transaction.atomic():
+        task = get_object_or_404(Task.objects.select_for_update(), pk=pk)
+        task.is_completed = not task.is_completed
+        task.save(update_fields=["is_completed"])
     if task.is_completed:
         messages.success(request, f'"{task}" is completed. Nice work!')
     else:
