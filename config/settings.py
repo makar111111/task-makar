@@ -133,6 +133,9 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+        # SQLite can't lock single rows with select_for_update(), so every
+        # transaction takes the write lock at its start and the others wait
+        "OPTIONS": {"transaction_mode": "IMMEDIATE"},
     }
 }
 
