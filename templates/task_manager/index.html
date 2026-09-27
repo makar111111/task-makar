@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block topbar %}
+  <div class="min-w-0">
+    <h1 class="tm-page-title">{{ greeting }}, {{ user.first_name|default:user.username }}</h1>
+    <p class="tm-page-subtitle">
+      {% if num_my_open_tasks %}
+        You have {{ num_my_open_tasks }} open task{{ num_my_open_tasks|pluralize }}{% if num_my_overdue_tasks %}, and {{ num_my_overdue_tasks }} of them {{ num_my_overdue_tasks|pluralize:"is,are" }} overdue{% endif %}.
+      {% else %}
+        You have no open tasks. Time to pick one!
+      {% endif %}
+    </p>
+  </div>
+  <div class="ms-auto d-flex align-items-center gap-3">
+    <span class="text-secondary small d-none d-md-inline"><i class="bi bi-eye me-1"></i>This is your {{ num_visits|ordinal }} visit</span>
+    <a class="btn btn-primary" href="{% url 'task_manager:task-create' %}"><i class="bi bi-plus-lg me-1"></i>New task</a>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+      <div class="tm-card tm-stat">
+        <div>
+          <div class="tm-stat-label">Open tasks</div>
+          <div class="tm-stat-value">{{ num_open }}</div>
+          <div class="tm-stat-note">{{ num_my_open_tasks }} assigned to you</div>
+        </div>
+        <span class="tm-stat-icon tm-soft-primary"><i class="bi bi-list-check"></i></span>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="tm-card tm-stat">
+        <div>
+          <div class="tm-stat-label">Completed</div>
+          <div class="tm-stat-value">{{ num_completed }}</div>
+          <div class="tm-stat-note">{{ completed_percent }}% of all tasks</div>
+        </div>
+        <span class="tm-stat-icon tm-soft-success"><i class="bi bi-check2-circle"></i></span>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="tm-card tm-stat">
+        <div>
+          <div class="tm-stat-label">Overdue</div>
+          <div class="tm-stat-value{% if num_overdue %} text-danger{% endif %}">{{ num_overdue }}</div>
+          <div class="tm-stat-note">{% if num_overdue %}Need attention{% else %}Everything is on track{% endif %}</div>
+        </div>
+        <span class="tm-stat-icon tm-soft-danger"><i class="bi bi-alarm"></i></span>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="tm-card tm-stat">
+        <div>
+          <div class="tm-stat-label">Projects</div>
+          <div class="tm-stat-value">{{ num_projects }}</div>
+          <div class="tm-stat-note">{{ num_teams }} team{{ num_teams|pluralize }}, {{ num_workers }} worker{{ num_workers|pluralize }}</div>
+        </div>
+        <span class="tm-stat-icon tm-soft-warning"><i class="bi bi-kanban"></i></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-xl-8">
+      <div class="tm-card">
+        <div class="tm-card-header">
+          <h2 class="tm-card-title">My tasks</h2>
+          <a class="tm-card-link" href="{% url 'task_manager:task-list' %}?assignee={{ user.pk }}">View all</a>
+        </div>
+        {% for task in my_tasks %}
+          {% include "includes/task_row.html" %}
+        {% empty %}
+          <div class="tm-empty"><i class="bi bi-cup-hot"></i>No open tasks are assigned to you.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="col-xl-4">
+      <div class="tm-card">
+        <div class="tm-card-header">
+          <h2 class="tm-card-title">Projects</h2>
+          <a class="tm-card-link" href="{% url 'task_manager:project-list' %}">View all</a>
+        </div>
+        <div class="px-3 py-2">
+          {% for project in projects %}
+            {% include "includes/project_progress.html" %}
+            {% if not forloop.last %}<hr class="my-2">{% endif %}
+          {% empty %}
+            <div class="tm-empty"><i class="bi bi-kanban"></i>No projects yet.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

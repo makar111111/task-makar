@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load task_manager_extras %}
+
+{% block title %}{{ worker.get_full_name|default:worker.username }}{% endblock %}
+
+{% block topbar %}
+  <div class="d-flex align-items-center gap-3 min-w-0">
+    <span class="tm-avatar tm-avatar-lg {{ worker|avatar_class }}">{{ worker.initials }}</span>
+    <div class="min-w-0">
+      <a class="tm-breadcrumb" href="{% url 'task_manager:worker-list' %}"><i class="bi bi-arrow-left me-1"></i>Workers</a>
+      <h1 class="tm-page-title">{{ worker.get_full_name|default:worker.username }}</h1>
+      <p class="tm-page-subtitle mt-0">{{ worker.position|default:"No position" }} · @{{ worker.username }}</p>
+    </div>
+  </div>
+  <div class="ms-auto d-flex flex-wrap gap-2">
+    <a class="btn btn-light" href="{% url 'task_manager:worker-update' worker.pk %}"><i class="bi bi-pencil me-1"></i>Edit</a>
+    <a class="btn btn-soft-danger" href="{% url 'task_manager:worker-delete' worker.pk %}"><i class="bi bi-trash3 me-1"></i>Delete</a>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="tm-card mb-3">
+        <div class="tm-card-header">
+          <h2 class="tm-card-title">Open tasks</h2>
+          <span class="text-secondary small">{{ open_tasks|length }}</span>
+        </div>
+        {% for task in open_tasks %}
+          {% include "includes/task_row.html" %}
+        {% empty %}
+          <div class="tm-empty"><i class="bi bi-cup-hot"></i>No open tasks.</div>
+        {% endfor %}
+      </div>
+
+      <div class="tm-card">
+        <div class="tm-card-header">
+          <h2 class="tm-card-title">Completed tasks</h2>
+          <span class="text-secondary small">{{ completed_tasks|length }}</span>
+        </div>
+        {% for task in completed_tasks %}
+          {% include "includes/task_row.html" %}
+        {% empty %}
+          <div class="tm-empty"><i class="bi bi-check2-circle"></i>No completed tasks yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="tm-card mb-3">
+        <div class="tm-card-header"><h2 class="tm-card-title">Contacts</h2></div>
+        <div class="tm-card-body">
+          <dl class="tm-meta-list">
+            <dt>Email</dt>
+            <dd class="text-break">{% if worker.email %}<a href="mailto:{{ worker.email }}">{{ worker.email }}</a>{% else %}—{% endif %}</dd>
+            <dt>Username</dt>
+            <dd>{{ worker.username }}</dd>
+            <dt>Joined</dt>
+            <dd>{{ worker.date_joined|date:"j M Y" }}</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="tm-card mb-3">
+        <div class="tm-card-header"><h2 class="tm-card-title">Teams</h2></div>
+        <div class="tm-card-body d-flex flex-wrap gap-2">
+          {% for team in worker.teams.all %}
+            <a class="tm-tag" href="{{ team.get_absolute_url }}">{{ team }}</a>
+          {% empty %}
+            <span class="text-secondary small">Not in a team yet.</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="tm-card">
+        <div class="tm-card-header"><h2 class="tm-card-title">Projects</h2></div>
+        <div class="tm-card-body d-flex flex-column gap-2">
+          {% for project in projects %}
+            <a class="tm-project" href="{{ project.get_absolute_url }}"><span class="tm-project-dot" style="background: {{ project|project_color }}"></span>{{ project }}</a>
+          {% empty %}
+            <span class="text-secondary small">Works on no projects yet.</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

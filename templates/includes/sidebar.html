@@ -1,0 +1,57 @@
+{% load task_manager_extras %}
+{% with url_name=request.resolver_match.url_name %}
+<aside class="tm-sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar" aria-label="Main navigation">
+  <div class="tm-sidebar-inner">
+    <div class="d-flex align-items-start justify-content-between">
+      <a class="tm-logo" href="{% url 'task_manager:index' %}">
+        <span class="tm-logo-mark"><i class="bi bi-check2-all"></i></span>
+        <span>Task<span class="tm-logo-accent">Makar</span></span>
+      </a>
+      <button type="button" class="btn-close btn-close-white d-lg-none mt-2" data-bs-dismiss="offcanvas" data-bs-target="#sidebar" aria-label="Close menu"></button>
+    </div>
+
+    <nav>
+      <div class="tm-nav-label">Workspace</div>
+      <a class="tm-nav-link{% if url_name == 'index' %} active{% endif %}" href="{% url 'task_manager:index' %}">
+        <i class="bi bi-grid-1x2"></i>Dashboard
+      </a>
+      {% open_tasks_count as open_count %}
+      <a class="tm-nav-link{% if url_name|startswith:'task-' %} active{% endif %}" href="{% url 'task_manager:task-list' %}">
+        <i class="bi bi-check2-square"></i>Tasks{% if open_count %}<span class="tm-nav-count">{{ open_count }}</span>{% endif %}
+      </a>
+      <a class="tm-nav-link{% if url_name|startswith:'project-' %} active{% endif %}" href="{% url 'task_manager:project-list' %}">
+        <i class="bi bi-kanban"></i>Projects
+      </a>
+      <a class="tm-nav-link{% if url_name|startswith:'team-' %} active{% endif %}" href="{% url 'task_manager:team-list' %}">
+        <i class="bi bi-people"></i>Teams
+      </a>
+      <a class="tm-nav-link{% if url_name|startswith:'worker-' %} active{% endif %}" href="{% url 'task_manager:worker-list' %}">
+        <i class="bi bi-person-badge"></i>Workers
+      </a>
+
+      <div class="tm-nav-label">Directories</div>
+      <a class="tm-nav-link{% if url_name|startswith:'tasktype-' %} active{% endif %}" href="{% url 'task_manager:tasktype-list' %}">
+        <i class="bi bi-bookmark"></i>Task types
+      </a>
+      <a class="tm-nav-link{% if url_name|startswith:'position-' %} active{% endif %}" href="{% url 'task_manager:position-list' %}">
+        <i class="bi bi-briefcase"></i>Positions
+      </a>
+      <a class="tm-nav-link{% if url_name|startswith:'tag-' %} active{% endif %}" href="{% url 'task_manager:tag-list' %}">
+        <i class="bi bi-tags"></i>Tags
+      </a>
+    </nav>
+
+    <div class="tm-user">
+      <span class="tm-avatar {{ user|avatar_class }}">{{ user.initials }}</span>
+      <div class="min-w-0">
+        <a class="tm-user-name text-truncate d-block" href="{{ user.get_absolute_url }}">{{ user.get_full_name|default:user.username }}</a>
+        <div class="tm-user-role text-truncate">{{ user.position|default:"No position" }}</div>
+      </div>
+      <form class="tm-logout" method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" title="Log out" aria-label="Log out"><i class="bi bi-box-arrow-right"></i></button>
+      </form>
+    </div>
+  </div>
+</aside>
+{% endwith %}

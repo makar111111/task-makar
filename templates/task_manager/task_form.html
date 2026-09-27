@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if object %}Edit task{% else %}New task{% endif %}{% endblock %}
+
+{% block topbar %}
+  <div class="min-w-0">
+    {% if object %}
+      <a class="tm-breadcrumb" href="{{ object.get_absolute_url }}"><i class="bi bi-arrow-left me-1"></i>{{ object.name }}</a>
+      <h1 class="tm-page-title mt-1">Edit task</h1>
+    {% else %}
+      <a class="tm-breadcrumb" href="{% url 'task_manager:task-list' %}"><i class="bi bi-arrow-left me-1"></i>Tasks</a>
+      <h1 class="tm-page-title mt-1">New task</h1>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block content %}
+  <form method="post" class="tm-card" novalidate>
+    {% csrf_token %}
+    <div class="tm-card-body">
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+      {% endif %}
+      <div class="row g-4">
+        <div class="col-lg-8">
+          {{ form.name|as_crispy_field }}
+          {{ form.description|as_crispy_field }}
+          {% include "includes/checkbox_list.html" with field=form.assignees %}
+          {% include "includes/checkbox_list.html" with field=form.tags %}
+        </div>
+        <div class="col-lg-4">
+          {{ form.project|as_crispy_field }}
+          {{ form.task_type|as_crispy_field }}
+          {{ form.priority|as_crispy_field }}
+          {{ form.deadline|as_crispy_field }}
+        </div>
+      </div>
+    </div>
+    <div class="tm-card-header border-top border-bottom-0 justify-content-end">
+      <a class="btn btn-light" href="{% if object %}{{ object.get_absolute_url }}{% else %}{% url 'task_manager:task-list' %}{% endif %}">Cancel</a>
+      <button class="btn btn-primary" type="submit">{% if object %}Save changes{% else %}Create task{% endif %}</button>
+    </div>
+  </form>
+{% endblock %}

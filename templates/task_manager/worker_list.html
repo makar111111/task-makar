@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load task_manager_extras %}
+
+{% block title %}Workers{% endblock %}
+
+{% block topbar %}
+  <div class="min-w-0">
+    <h1 class="tm-page-title">Workers</h1>
+    <p class="tm-page-subtitle">Everyone who creates, takes and completes tasks.</p>
+  </div>
+  <a class="btn btn-primary ms-auto" href="{% url 'task_manager:worker-create' %}"><i class="bi bi-person-plus me-1"></i>New worker</a>
+{% endblock %}
+
+{% block content %}
+  {% include "includes/search_form.html" %}
+
+  <div class="row g-3">
+    {% for worker in worker_list %}
+      <div class="col-sm-6 col-lg-4 col-xxl-3">
+        <a class="tm-card d-block p-3 h-100" href="{{ worker.get_absolute_url }}">
+          <div class="d-flex align-items-center gap-3">
+            <span class="tm-avatar {{ worker|avatar_class }}">{{ worker.initials }}</span>
+            <div class="min-w-0">
+              <div class="fw-bold text-truncate">{{ worker.get_full_name|default:worker.username }}</div>
+              <div class="small text-secondary text-truncate">{{ worker.position|default:"No position" }}</div>
+            </div>
+          </div>
+          <div class="d-flex flex-wrap gap-1 mt-3">
+            {% for team in worker.teams.all %}
+              <span class="tm-tag">{{ team }}</span>
+            {% empty %}
+              <span class="small text-secondary">No team yet</span>
+            {% endfor %}
+          </div>
+          <div class="d-flex gap-3 mt-3 small">
+            <span><strong>{{ worker.num_open_tasks }}</strong> <span class="text-secondary">open</span></span>
+            <span><strong>{{ worker.num_completed_tasks }}</strong> <span class="text-secondary">completed</span></span>
+          </div>
+        </a>
+      </div>
+    {% empty %}
+      <div class="col-12">
+        <div class="tm-card tm-empty"><i class="bi bi-people"></i>No workers found.</div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% include "includes/pagination.html" %}
+{% endblock %}

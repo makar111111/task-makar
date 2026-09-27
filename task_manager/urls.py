@@ -1,0 +1,171 @@
+from django.urls import path
+
+from task_manager.views import (
+    dashboard,
+    directories,
+    projects,
+    tasks,
+    teams,
+    workers,
+)
+
+app_name = "task_manager"
+
+urlpatterns = [
+    path("", dashboard.index, name="index"),
+    path("tasks/", tasks.TaskListView.as_view(), name="task-list"),
+    path(
+        "tasks/<int:pk>/", tasks.TaskDetailView.as_view(), name="task-detail"
+    ),
+    path(
+        "tasks/create/", tasks.TaskCreateView.as_view(), name="task-create"
+    ),
+    path(
+        "tasks/<int:pk>/update/",
+        tasks.TaskUpdateView.as_view(),
+        name="task-update",
+    ),
+    path(
+        "tasks/<int:pk>/delete/",
+        tasks.TaskDeleteView.as_view(),
+        name="task-delete",
+    ),
+    path(
+        "tasks/<int:pk>/toggle-assign/",
+        tasks.toggle_task_assignment,
+        name="task-toggle-assign",
+    ),
+    path(
+        "tasks/<int:pk>/toggle-complete/",
+        tasks.toggle_task_completion,
+        name="task-toggle-complete",
+    ),
+    path("workers/", workers.WorkerListView.as_view(), name="worker-list"),
+    path(
+        "workers/<int:pk>/",
+        workers.WorkerDetailView.as_view(),
+        name="worker-detail",
+    ),
+    path(
+        "workers/create/",
+        workers.WorkerCreateView.as_view(),
+        name="worker-create",
+    ),
+    path(
+        "workers/<int:pk>/update/",
+        workers.WorkerUpdateView.as_view(),
+        name="worker-update",
+    ),
+    path(
+        "workers/<int:pk>/delete/",
+        workers.WorkerDeleteView.as_view(),
+        name="worker-delete",
+    ),
+    path(
+        "projects/",
+        projects.ProjectListView.as_view(),
+        name="project-list",
+    ),
+    path(
+        "projects/<int:pk>/",
+        projects.ProjectDetailView.as_view(),
+        name="project-detail",
+    ),
+    path(
+        "projects/create/",
+        projects.ProjectCreateView.as_view(),
+        name="project-create",
+    ),
+    path(
+        "projects/<int:pk>/update/",
+        projects.ProjectUpdateView.as_view(),
+        name="project-update",
+    ),
+    path(
+        "projects/<int:pk>/delete/",
+        projects.ProjectDeleteView.as_view(),
+        name="project-delete",
+    ),
+    path("teams/", teams.TeamListView.as_view(), name="team-list"),
+    path(
+        "teams/<int:pk>/", teams.TeamDetailView.as_view(), name="team-detail"
+    ),
+    path(
+        "teams/create/", teams.TeamCreateView.as_view(), name="team-create"
+    ),
+    path(
+        "teams/<int:pk>/update/",
+        teams.TeamUpdateView.as_view(),
+        name="team-update",
+    ),
+    path(
+        "teams/<int:pk>/delete/",
+        teams.TeamDeleteView.as_view(),
+        name="team-delete",
+    ),
+    path(
+        "teams/<int:pk>/toggle-membership/",
+        teams.toggle_team_membership,
+        name="team-toggle-membership",
+    ),
+    path(
+        "positions/",
+        directories.PositionListView.as_view(),
+        name="position-list",
+    ),
+    path(
+        "positions/create/",
+        directories.PositionCreateView.as_view(),
+        name="position-create",
+    ),
+    path(
+        "positions/<int:pk>/update/",
+        directories.PositionUpdateView.as_view(),
+        name="position-update",
+    ),
+    path(
+        "positions/<int:pk>/delete/",
+        directories.PositionDeleteView.as_view(),
+        name="position-delete",
+    ),
+    path(
+        "task-types/",
+        directories.TaskTypeListView.as_view(),
+        name="tasktype-list",
+    ),
+    path(
+        "task-types/create/",
+        directories.TaskTypeCreateView.as_view(),
+        name="tasktype-create",
+    ),
+    path(
+        "task-types/<int:pk>/update/",
+        directories.TaskTypeUpdateView.as_view(),
+        name="tasktype-update",
+    ),
+    path(
+        "task-types/<int:pk>/delete/",
+        directories.TaskTypeDeleteView.as_view(),
+        name="tasktype-delete",
+    ),
+    path(
+        "tags/",
+        directories.TagListView.as_view(),
+        name="tag-list",
+    ),
+    path(
+        "tags/create/",
+        directories.TagCreateView.as_view(),
+        name="tag-create",
+    ),
+    path(
+        "tags/<int:pk>/update/",
+        directories.TagUpdateView.as_view(),
+        name="tag-update",
+    ),
+    path(
+        "tags/<int:pk>/delete/",
+        directories.TagDeleteView.as_view(),
+        name="tag-delete",
+    ),
+]

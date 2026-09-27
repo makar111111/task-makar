@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Delete {{ object_type }}{% endblock %}
+
+{% block topbar %}
+  <div class="min-w-0">
+    <a class="tm-breadcrumb" href="{{ cancel_url }}"><i class="bi bi-arrow-left me-1"></i>Back</a>
+    <h1 class="tm-page-title mt-1">Delete {{ object_type }}</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="tm-card" style="max-width: 560px">
+    <div class="tm-card-body">
+      <span class="tm-stat-icon tm-soft-danger mb-3"><i class="bi bi-trash3"></i></span>
+      <p class="mb-2">Are you sure you want to delete the {{ object_type }} <strong>{{ object }}</strong>?</p>
+      {% if delete_warning %}
+        <p class="text-danger fw-semibold mb-2"><i class="bi bi-exclamation-triangle me-1"></i>{{ delete_warning }}</p>
+      {% endif %}
+      {% if can_delete %}
+        <p class="text-secondary small mb-4">This can't be undone.</p>
+        <form method="post" class="d-flex gap-2">
+          {% csrf_token %}
+          <button class="btn btn-danger" type="submit">Yes, delete</button>
+          <a class="btn btn-light" href="{{ cancel_url }}">Cancel</a>
+        </form>
+      {% else %}
+        <a class="btn btn-light mt-2" href="{{ cancel_url }}">Back</a>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

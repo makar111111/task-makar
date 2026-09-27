@@ -1,0 +1,30 @@
+{% load task_manager_extras %}
+{% if is_paginated %}
+  <nav class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3" aria-label="Pagination">
+    <span class="text-secondary small">Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ page_obj.paginator.count }}</span>
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?{% query_transform request page=page_obj.previous_page_number %}" aria-label="Previous page"><i class="bi bi-chevron-left"></i></a></li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link"><i class="bi bi-chevron-left"></i></span></li>
+      {% endif %}
+
+      {% elided_page_range page_obj as page_numbers %}
+      {% for number in page_numbers %}
+        {% if number == page_obj.paginator.ELLIPSIS %}
+          <li class="page-item disabled"><span class="page-link">{{ number }}</span></li>
+        {% elif number == page_obj.number %}
+          <li class="page-item active" aria-current="page"><span class="page-link">{{ number }}</span></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?{% query_transform request page=number %}">{{ number }}</a></li>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?{% query_transform request page=page_obj.next_page_number %}" aria-label="Next page"><i class="bi bi-chevron-right"></i></a></li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link"><i class="bi bi-chevron-right"></i></span></li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endif %}

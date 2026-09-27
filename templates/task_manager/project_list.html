@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load task_manager_extras %}
+
+{% block title %}Projects{% endblock %}
+
+{% block topbar %}
+  <div class="min-w-0">
+    <h1 class="tm-page-title">Projects</h1>
+    <p class="tm-page-subtitle">What the teams are working on and how far they got.</p>
+  </div>
+  <a class="btn btn-primary ms-auto" href="{% url 'task_manager:project-create' %}"><i class="bi bi-plus-lg me-1"></i>New project</a>
+{% endblock %}
+
+{% block content %}
+  {% include "includes/search_form.html" %}
+
+  <div class="row g-3">
+    {% for project in project_list %}
+      {% with color=project|project_color %}
+        <div class="col-md-6 col-xl-4">
+          <div class="tm-card p-3 h-100 d-flex flex-column">
+            <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+              <a class="tm-project fw-bold fs-6" href="{{ project.get_absolute_url }}"><span class="tm-project-dot" style="background: {{ color }}"></span>{{ project.name }}</a>
+              {% if project.num_overdue_tasks %}
+                <span class="tm-badge tm-soft-danger"><i class="bi bi-alarm"></i>{{ project.num_overdue_tasks }} overdue</span>
+              {% endif %}
+            </div>
+            <p class="small text-secondary tm-clamp-2">{{ project.description|default:"No description yet." }}</p>
+            <div class="mt-auto">
+              <div class="d-flex justify-content-between small mb-2">
+                <span class="text-secondary">{{ project.num_completed_tasks }} of {{ project.num_tasks }} task{{ project.num_tasks|pluralize }} done</span>
+                <span class="fw-bold">{% widthratio project.num_completed_tasks project.num_tasks 100 %}%</span>
+              </div>
+              <div class="tm-progress"><div class="tm-progress-bar" style="width: {% widthratio project.num_completed_tasks project.num_tasks 100 %}%; background: {{ color }}"></div></div>
+              <div class="d-flex justify-content-between align-items-center mt-3">
+                <div class="d-flex flex-wrap gap-1">
+                  {% for team in project.teams.all %}
+                    <a class="tm-tag" href="{{ team.get_absolute_url }}">{{ team }}</a>
+                  {% empty %}
+                    <span class="small text-secondary">No teams yet</span>
+                  {% endfor %}
+                </div>
+                <div class="tm-avatars">
+                  {% for member in project.get_members|slice:":4" %}
+                    <a class="tm-avatar {{ member|avatar_class }}" href="{{ member.get_absolute_url }}" title="{{ member.get_full_name|default:member.username }}">{{ member.initials }}</a>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endwith %}
+    {% empty %}
+      <div class="col-12">
+        <div class="tm-card tm-empty"><i class="bi bi-kanban"></i>No projects found.</div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% include "includes/pagination.html" %}
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if object %}Edit{% else %}New{% endif %} {{ directory.singular }}{% endblock %}
+
+{% block topbar %}
+  <div class="min-w-0">
+    <a class="tm-breadcrumb" href="{{ directory.list_url }}"><i class="bi bi-arrow-left me-1"></i>{{ directory.title }}</a>
+    <h1 class="tm-page-title mt-1">{% if object %}Edit {{ directory.singular }}{% else %}New {{ directory.singular }}{% endif %}</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <form method="post" class="tm-card" style="max-width: 560px" novalidate>
+    {% csrf_token %}
+    <div class="tm-card-body">
+      {{ form|crispy }}
+      {% if directory.hint %}
+        <p class="form-text mb-0"><i class="bi bi-info-circle me-1"></i>{{ directory.hint }}</p>
+      {% endif %}
+    </div>
+    <div class="tm-card-header border-top border-bottom-0 justify-content-end">
+      <a class="btn btn-light" href="{{ directory.list_url }}">Cancel</a>
+      <button class="btn btn-primary" type="submit">{% if object %}Save changes{% else %}Create {{ directory.singular }}{% endif %}</button>
+    </div>
+  </form>
+{% endblock %}

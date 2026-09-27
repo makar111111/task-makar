@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}{{ directory.title }}{% endblock %}
+
+{% block topbar %}
+  <div class="min-w-0">
+    <h1 class="tm-page-title">{{ directory.title }}</h1>
+    <p class="tm-page-subtitle">{{ directory.description }}</p>
+  </div>
+  <a class="btn btn-primary ms-auto" href="{{ directory.create_url }}"><i class="bi bi-plus-lg me-1"></i>New {{ directory.singular }}</a>
+{% endblock %}
+
+{% block content %}
+  <div style="max-width: 820px">
+    {% include "includes/search_form.html" %}
+
+    <div class="tm-card">
+      {% for item in object_list %}
+        <div class="tm-person justify-content-between">
+          <div class="d-flex align-items-center gap-3 min-w-0">
+            <span class="tm-stat-icon tm-soft-primary tm-icon-sm"><i class="bi {{ directory.icon }}"></i></span>
+            <span class="fw-semibold text-truncate">{{ item.name }}</span>
+          </div>
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            {% if directory.filter_param %}
+              <a class="small text-secondary me-2" href="{% url 'task_manager:task-list' %}?{{ directory.filter_param }}={{ item.pk }}&amp;status=all">{{ item.num_related }} {{ directory.count_label }}{{ item.num_related|pluralize }}</a>
+            {% else %}
+              <span class="small text-secondary me-2">{{ item.num_related }} {{ directory.count_label }}{{ item.num_related|pluralize }}</span>
+            {% endif %}
+            <a class="btn btn-sm btn-light" href="{% url directory.update_url_name item.pk %}" title="Edit" aria-label="Edit {{ item.name }}"><i class="bi bi-pencil"></i></a>
+            <a class="btn btn-sm btn-soft-danger" href="{% url directory.delete_url_name item.pk %}" title="Delete" aria-label="Delete {{ item.name }}"><i class="bi bi-trash3"></i></a>
+          </div>
+        </div>
+      {% empty %}
+        <div class="tm-empty"><i class="bi {{ directory.icon }}"></i>Nothing found.</div>
+      {% endfor %}
+    </div>
+
+    {% include "includes/pagination.html" %}
+  </div>
+{% endblock %}
